@@ -22,11 +22,6 @@ export const StatsCard = ({ title, value, icon: Icon, description, variant = "de
         <div className={`text-2xl font-bold ${variant === "success" ? "text-success" : ""}`}>
           {value}
         </div>
-        {description && (
-          <p className="text-xs text-muted-foreground mt-1">
-            {description}
-          </p>
-        )}
       </CardContent>
     </Card>
   );

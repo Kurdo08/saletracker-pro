@@ -8,7 +8,9 @@ import { SalesTable } from "@/components/SalesTable";
 import { AddSaleDialog } from "@/components/AddSaleDialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { TrendingUp, Euro, ShoppingCart, LogOut } from "lucide-react";
+import { TrendingUp, Euro, ShoppingCart, LogOut, Wallet } from "lucide-react";
+
+import { Sale } from "@/types/sales";
 
 interface DbSale {
   id: string;
@@ -18,16 +20,9 @@ interface DbSale {
   selling_price: number;
   quantity: number;
   created_at: string;
-}
-
-interface Sale {
-  id: string;
-  customer: string;
-  model: string;
-  purchasePrice: number;
-  sellingPrice: number;
-  quantity: number;
-  date: Date;
+  is_partnership?: boolean;
+  my_investment?: number;
+  partner_investment?: number;
 }
 
 const Index = () => {
@@ -82,6 +77,9 @@ const Index = () => {
         sellingPrice: Number(sale.selling_price),
         quantity: sale.quantity,
         date: new Date(sale.created_at),
+        isPartnership: sale.is_partnership,
+        myInvestment: sale.my_investment ? Number(sale.my_investment) : undefined,
+        partnerInvestment: sale.partner_investment ? Number(sale.partner_investment) : undefined,
       }));
 
       setSales(formattedSales);
@@ -100,24 +98,33 @@ const Index = () => {
       sum + ((sale.sellingPrice - sale.purchasePrice) * sale.quantity), 0
     );
     const totalSales = sales.length;
+    const totalInvestment = sales.reduce((sum, sale) => sum + (sale.purchasePrice * sale.quantity), 0);
 
-    return { totalRevenue, totalProfit, totalSales };
+    return { totalRevenue, totalProfit, totalSales, totalInvestment };
   }, [sales]);
 
   const handleAddSale = async (newSale: Omit<Sale, "id">) => {
     if (!session?.user) return;
 
     try {
+      const insertData: any = {
+        user_id: session.user.id,
+        customer: newSale.customer,
+        model: newSale.model,
+        purchase_price: newSale.purchasePrice,
+        selling_price: newSale.sellingPrice,
+        quantity: newSale.quantity,
+      };
+
+      if (newSale.isPartnership) {
+        insertData.is_partnership = true;
+        insertData.my_investment = newSale.myInvestment;
+        insertData.partner_investment = newSale.partnerInvestment;
+      }
+
       const { data, error } = await supabase
         .from("sales")
-        .insert({
-          user_id: session.user.id,
-          customer: newSale.customer,
-          model: newSale.model,
-          purchase_price: newSale.purchasePrice,
-          selling_price: newSale.sellingPrice,
-          quantity: newSale.quantity,
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -191,37 +198,38 @@ const Index = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Verkoopoverzicht</h1>
+            <h1 className="text-3xl font-bold text-foreground">KS-010</h1>
           </div>
           <div className="flex gap-2">
             <AddSaleDialog onAddSale={handleAddSale} />
-            <Button variant="outline" onClick={handleLogout} className="gap-2">
+            <Button variant="outline" size="icon" onClick={handleLogout}>
               <LogOut className="h-4 w-4" />
-              Uitloggen
             </Button>
           </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 gap-4 mb-8">
           <StatsCard
-            title="Totale Omzet"
-            value={formatCurrency(stats.totalRevenue)}
+            title="Omzet"
+            value={stats.totalRevenue.toLocaleString('nl-NL', { maximumFractionDigits: 0 })}
             icon={Euro}
-            description="Alle verkopen bij elkaar"
           />
           <StatsCard
-            title="Totale Winst"
-            value={formatCurrency(stats.totalProfit)}
+            title="Aantal"
+            value={stats.totalSales.toString()}
+            icon={ShoppingCart}
+          />
+          <StatsCard
+            title="Winst"
+            value={stats.totalProfit.toLocaleString('nl-NL', { maximumFractionDigits: 0 })}
             icon={TrendingUp}
-            description="Netto winst na inkoop"
             variant="success"
           />
           <StatsCard
-            title="Aantal Verkopen"
-            value={stats.totalSales.toString()}
-            icon={ShoppingCart}
-            description="Totaal aantal transacties"
+            title="Investering"
+            value={stats.totalInvestment.toLocaleString('nl-NL', { maximumFractionDigits: 0 })}
+            icon={Wallet}
           />
         </div>
 
