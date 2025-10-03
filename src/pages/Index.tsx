@@ -6,6 +6,7 @@ import { SalesStats } from "@/types/sales";
 import { StatsCard } from "@/components/StatsCard";
 import { SalesTable } from "@/components/SalesTable";
 import { AddSaleDialog } from "@/components/AddSaleDialog";
+import { DailySalesOverview } from "@/components/DailySalesOverview";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { TrendingUp, Euro, ShoppingCart, LogOut, Wallet } from "lucide-react";
@@ -231,6 +232,10 @@ const Index = () => {
             value={stats.totalInvestment.toLocaleString('nl-NL', { maximumFractionDigits: 0 })}
             icon={Wallet}
           />
+        </div>
+
+        <div className="mb-6">
+          <DailySalesOverview sales={sales} />
         </div>
 
         <div className="mb-6">
