@@ -19,7 +19,10 @@ export type Database = {
           created_at: string
           customer: string
           id: string
+          is_partnership: boolean | null
           model: string
+          my_investment: number | null
+          partner_investment: number | null
           purchase_price: number
           quantity: number
           selling_price: number
@@ -29,7 +32,10 @@ export type Database = {
           created_at?: string
           customer: string
           id?: string
+          is_partnership?: boolean | null
           model: string
+          my_investment?: number | null
+          partner_investment?: number | null
           purchase_price: number
           quantity: number
           selling_price: number
@@ -39,7 +45,10 @@ export type Database = {
           created_at?: string
           customer?: string
           id?: string
+          is_partnership?: boolean | null
           model?: string
+          my_investment?: number | null
+          partner_investment?: number | null
           purchase_price?: number
           quantity?: number
           selling_price?: number
