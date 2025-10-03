@@ -6,7 +6,6 @@ import { SalesStats } from "@/types/sales";
 import { StatsCard } from "@/components/StatsCard";
 import { SalesTable } from "@/components/SalesTable";
 import { AddSaleDialog } from "@/components/AddSaleDialog";
-import { Calculator } from "@/components/Calculator";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { TrendingUp, Euro, ShoppingCart, LogOut } from "lucide-react";
@@ -191,24 +190,20 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Verkoopoverzicht</h1>
-              <p className="text-muted-foreground">
-                Overzicht van al je verkopen, winsten en klanten
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Calculator />
-              <AddSaleDialog onAddSale={handleAddSale} />
-              <Button variant="outline" onClick={handleLogout} className="gap-2">
-                <LogOut className="h-4 w-4" />
-                Uitloggen
-              </Button>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Verkoopoverzicht</h1>
+          </div>
+          <div className="flex gap-2">
+            <AddSaleDialog onAddSale={handleAddSale} />
+            <Button variant="outline" onClick={handleLogout} className="gap-2">
+              <LogOut className="h-4 w-4" />
+              Uitloggen
+            </Button>
+          </div>
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3 mb-8">
+        <div className="grid grid-cols-3 gap-4 mb-8">
           <StatsCard
             title="Totale Omzet"
             value={formatCurrency(stats.totalRevenue)}
