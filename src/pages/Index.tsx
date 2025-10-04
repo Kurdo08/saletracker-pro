@@ -6,10 +6,9 @@ import { SalesStats } from "@/types/sales";
 import { StatsCard } from "@/components/StatsCard";
 import { SalesTable } from "@/components/SalesTable";
 import { AddSaleDialog } from "@/components/AddSaleDialog";
-import { DailySalesOverview } from "@/components/DailySalesOverview";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { TrendingUp, Euro, ShoppingCart, LogOut, Wallet } from "lucide-react";
+import { TrendingUp, Euro, ShoppingCart, LogOut, Wallet, Plus } from "lucide-react";
 
 import { Sale } from "@/types/sales";
 
@@ -234,8 +233,16 @@ const Index = () => {
           />
         </div>
 
-        <div className="mb-6">
-          <DailySalesOverview sales={sales} />
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Zelf Verkopen</h2>
+          <Button
+            variant="outline"
+            onClick={() => navigate("/sales")}
+            className="gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Bekijk alle verkopen
+          </Button>
         </div>
 
         <div className="mb-6">

@@ -33,6 +33,24 @@ export const SalesTable = ({ sales, onDelete }: SalesTableProps) => {
     return (sale.sellingPrice - sale.purchasePrice) * sale.quantity;
   };
 
+  const calculateMyProfit = (sale: Sale) => {
+    if (!sale.isPartnership || !sale.myInvestment || !sale.partnerInvestment) {
+      return calculateProfit(sale);
+    }
+    const totalProfit = calculateProfit(sale);
+    const totalInvestment = sale.myInvestment + sale.partnerInvestment;
+    return (sale.myInvestment / totalInvestment) * totalProfit;
+  };
+
+  const calculatePartnerProfit = (sale: Sale) => {
+    if (!sale.isPartnership || !sale.myInvestment || !sale.partnerInvestment) {
+      return 0;
+    }
+    const totalProfit = calculateProfit(sale);
+    const totalInvestment = sale.myInvestment + sale.partnerInvestment;
+    return (sale.partnerInvestment / totalInvestment) * totalProfit;
+  };
+
   return (
     <>
       {/* Desktop view */}
@@ -70,7 +88,16 @@ export const SalesTable = ({ sales, onDelete }: SalesTableProps) => {
                     {formatCurrency(calculateTotal(sale))}
                   </TableCell>
                   <TableCell className="text-right font-semibold text-success">
-                    {formatCurrency(calculateProfit(sale))}
+                    {sale.isPartnership ? (
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">Jouw winst:</div>
+                        <div>{formatCurrency(calculateMyProfit(sale))}</div>
+                        <div className="text-xs text-muted-foreground mt-1">Partner krijgt:</div>
+                        <div className="text-xs">{formatCurrency(calculatePartnerProfit(sale))}</div>
+                      </div>
+                    ) : (
+                      formatCurrency(calculateProfit(sale))
+                    )}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {format(sale.date, "dd MMM yyyy", { locale: nl })}
@@ -139,10 +166,23 @@ export const SalesTable = ({ sales, onDelete }: SalesTableProps) => {
               </div>
               
               <div className="pt-2 border-t">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Winst</span>
-                  <span className="font-semibold text-success">{formatCurrency(calculateProfit(sale))}</span>
-                </div>
+                {sale.isPartnership ? (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Jouw winst</span>
+                      <span className="font-semibold text-success">{formatCurrency(calculateMyProfit(sale))}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">Partner krijgt</span>
+                      <span className="text-sm text-muted-foreground">{formatCurrency(calculatePartnerProfit(sale))}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Winst</span>
+                    <span className="font-semibold text-success">{formatCurrency(calculateProfit(sale))}</span>
+                  </div>
+                )}
               </div>
             </div>
           ))
